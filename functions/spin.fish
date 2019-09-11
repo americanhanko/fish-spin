@@ -3,7 +3,7 @@ function spin --description 'Background job spinner'
     set --local commands
 
     set --local chars ''
-    set --local setlist pong
+    set --local setlist bouncingBall
 
     set --local format '  @\r'
     set --local size 1
