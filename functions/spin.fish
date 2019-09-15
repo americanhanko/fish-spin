@@ -1,13 +1,10 @@
 function spin --description 'Background job spinner'
 
     set --local commands
-
-    set --local chars ''
-    set --local setlist bouncingBall
-
+    set --local chars '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
     set --local format '  @\r'
     set --local size 1
-    set --local rate 100
+    set --local rate 240
 
     set --local error /dev/stderr
 
@@ -19,14 +16,17 @@ function spin --description 'Background job spinner'
             case c chars
                 set chars $2
 
-            case s setlist
-                set setlist $2
+            case s set
+                set set $2
+
+            case l list
+                set list true
 
             case f format
                 set format $2
 
-            case n framesize
-                set framesize $2
+            case n size
+                set size $2
 
             case r rate
                 set rate $2
@@ -38,13 +38,14 @@ function spin --description 'Background job spinner'
                 printf "Usage: spin COMMANDS [(-s | --style STYLE)] [(-f | --format FORMAT)] \n"
                 printf "                     [(-i | --rate FLOAT)] [--error FILE] [(-h | --help)]\n\n"
 
-                printf "\t-s --chars STRING\tInline string to use as the spinner characters.\n"
+                printf "\t-c --chars STRING\tInline string to use as the spinner characters.\n"
                 printf "\t-f --format FORMAT\tCustomize the spinner display (default: '%s')\n" $format
                 printf "\t-r --rate FLOAT\tDetermine the rate between slices (default: $rate)\n"
-                printf "\t-n --framesize INT\tSet the size of the spinner frames (default: $framesize)\n"
-                printf "\t-l --setlist STRING\tName of the spinner setlist to use (default: $setlist)\n"
+                printf "\t-n --size INT\tSet the size of the spinner frames (default: $size)\n"
+                printf "\t-s --set STRING\tName of the spinner set to use (default: $set)\n"
                 printf "\t-e --error FILE\t\tWrite errors to FILE (default: $error)\n"
                 printf "\n"
+                printf "\t-s --list\t\tList available spinner sets\n"
                 printf "\t-h --help\t\tShow usage help\n"
                 printf "\n"
                 return
@@ -56,21 +57,57 @@ function spin --description 'Background job spinner'
         end
     end
 
-    if not set --query commands[1]
+    if not set --query XDG_CACHE_HOME
+        echo XDG_CACHE_HOME not set
         return 1
     end
 
-    if set --query setlist
-        set jspinners $TMPDIR/spinners.json
-        test -e $jspinners
-        or curl https://raw.githubusercontent.com/sindresorhus/cli-spinners/master/spinners.json --output $jspinners
-        set blob (python3 -c "import json;print(json.loads(open('$jspinners').read())['"$setlist"'])")
+    set --local jspinners $XDG_CACHE_HOME/spinners.json
+    test -e $jspinners
+    or curl --silent https://raw.githubusercontent.com/sindresorhus/cli-spinners/master/spinners.json --output $jspinners
+    set --local hash (python3 -c "import json;print(json.loads(open('$jspinners').read()))")
+
+    if test -z $argv[1]
+        spin --help >/dev/stderr
+        return 1
+    end
+
+    if set --query list
+        set --local words (python3 -c "print(list("$hash".keys()))" \
+            | grep --color=never --only-matching --extended-regexp '\w+' \
+            | sort)
+        set count 0
+        set i (math $COLUMNS / 32)
+        set max (math "round($i)")
+        for word in $words
+            set wl (string length $word)
+            if test $wl -lt 8
+                set feed \t\t\t
+            else if test $wl -lt 16
+                set feed \t\t
+            else
+                set feed \t
+            end
+
+            if test $count -lt $max
+                set count (math $count + 1)
+                echo -en $word$feed
+            else
+                set count 0
+                echo -e $word
+            end
+        end
+        return 0
+    end
+
+    if set --query set
+        set blob (python3 -c "print("$hash"['"$set"'])")
         set chars (python3 -c "print(''.join("$blob"['frames']))")
-        set framesize (python3 -c "print(len("$blob"['frames'][0]))")
+        set size (python3 -c "print(len("$blob"['frames'][0]))")
         set rate (python3 -c "print("$blob"['interval'])")
     end
 
-    set size (ruby -e "puts '.' * $framesize")
+    set size (ruby -e "puts '.' * $size")
     set chars (printf "%s\n" "$chars" | grep --only-matching $size)
     set interval (math $rate / 1000)
 
@@ -91,8 +128,11 @@ function spin --description 'Background job spinner'
         }
     ')
 
+    tput civis
+
     while contains -- $job_id (jobs | cut -d\t -f1 ^ /dev/null)
         if status --is-interactive
+
             for char in $chars
                 printf $format | awk -v char=(printf "%s\n" $char | sed 's/=/\\\=/') '
                 {
@@ -105,6 +145,8 @@ function spin --description 'Background job spinner'
             end
         end
     end
+
+    tput cvvis
 
     if test -s $tmp
         command cat $tmp >$error
