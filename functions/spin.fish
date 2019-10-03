@@ -73,30 +73,9 @@ function spin --description 'Background job spinner'
     end
 
     if set --query list
-        set --local words (python3 -c "print(list("$hash".keys()))" \
+        python3 -c "print(list("$hash".keys()))" \
             | grep --color=never --only-matching --extended-regexp '\w+' \
-            | sort)
-        set count 0
-        set i (math $COLUMNS / 32)
-        set max (math "round($i)")
-        for word in $words
-            set wl (string length $word)
-            if test $wl -lt 8
-                set feed \t\t\t
-            else if test $wl -lt 16
-                set feed \t\t
-            else
-                set feed \t
-            end
-
-            if test $count -lt $max
-                set count (math $count + 1)
-                echo -en $word$feed
-            else
-                set count 0
-                echo -e $word
-            end
-        end
+            | column -c $COLUMNS
         return 0
     end
 
