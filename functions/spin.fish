@@ -5,6 +5,7 @@ function spin --description 'Background job spinner'
     set --local format '  @\r'
     set --local size 1
     set --local rate 240
+    set --local spinners_source https://raw.githubusercontent.com/sindresorhus/cli-spinners/master/spinners.json
 
     set --local error /dev/stderr
 
@@ -64,7 +65,7 @@ function spin --description 'Background job spinner'
 
     set --local jspinners $XDG_CACHE_HOME/spinners.json
     test -e $jspinners
-    or curl --silent https://raw.githubusercontent.com/sindresorhus/cli-spinners/master/spinners.json --output $jspinners
+    or curl --silent $spinners_source --output $jspinners
     set --local hash (python3 -c "import json;print(json.loads(open('$jspinners').read()))")
 
     if test -z $argv[1]

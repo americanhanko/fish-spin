@@ -7,7 +7,7 @@ Background job spinner for the [fish shell](https://fishshell.com).
 With [Fisher](https://github.com/jorgebucaran/fisher)
 
 ```
-fisher add fishpkg/fish-spin
+fisher add americanhanko/fish-spin
 ```
 
 ## Usage
