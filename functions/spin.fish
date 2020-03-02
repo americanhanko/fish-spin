@@ -94,7 +94,7 @@ function spin --description 'Background job spinner'
     set --local tmp (mktemp -t spin.XXX)
     set --local job_id
 
-    fish --command "$commands" >/dev/stdout ^$tmp &
+    fish --command "$commands" >/dev/stdout 2>$tmp &
 
     set job_id (jobs --last | awk -v FS=\t '
         /[0-9]+\t/{
@@ -110,7 +110,7 @@ function spin --description 'Background job spinner'
 
     tput civis
 
-    while contains -- $job_id (jobs | cut -d\t -f1 ^ /dev/null)
+    while contains -- $job_id (jobs | cut -d\t -f1 2>/dev/null)
         if status --is-interactive
 
             for char in $chars
