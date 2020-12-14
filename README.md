@@ -8,7 +8,7 @@ shell.
 Using [fisher](https://github.com/jorgebucaran/fisher)
 
 ```
-fisher add americanhanko/fish-spin
+fisher install americanhanko/fish-spin
 ```
 
 ## Usage
