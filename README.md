@@ -54,7 +54,7 @@ sequence of dots.
 
 ### `XDG_CACHE_HOME not set`
 
-If `XDG_CACHE_HOME` is not, you can set it a sane value:
+If `XDG_CACHE_HOME` is not, you can set it to a sane value:
 
 ```
 set -U XDG_CACHE_HOME $HOME/.cache
