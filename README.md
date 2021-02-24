@@ -8,7 +8,7 @@ shell.
 Using [fisher](https://github.com/jorgebucaran/fisher)
 
 ```
-fisher install americanhanko/fish-spin
+fisher install jorgebucaran/getopts.fish americanhanko/fish-spin
 ```
 
 ## Usage
@@ -48,3 +48,14 @@ Usage: spin COMMANDS [(-s | --style STYLE)] [(-f | --format FORMAT)]
 Replace the default spinner with your own string of characters. For example, `--style=12345`
 will display the numbers from 1 to 5, and `--style=.` with `--format=@` an increasing
 sequence of dots.
+
+
+## Troubleshooting
+
+### `XDG_CACHE_HOME not set`
+
+If `XDG_CACHE_HOME` is not, you can set it a sane value:
+
+```
+set -U XDG_CACHE_HOME $HOME/.cache
+```
