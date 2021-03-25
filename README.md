@@ -11,6 +11,12 @@ Using [fisher](https://github.com/jorgebucaran/fisher)
 fisher install jorgebucaran/getopts.fish americanhanko/fish-spin
 ```
 
+## Dependencies
+
+- Ruby
+- Python 3
+- `jorgebucaran/getopts.fish`
+
 ## Usage
 
 ```fish
@@ -29,18 +35,18 @@ end
 ## Options
 
 ```
-Usage: spin COMMANDS [(-s | --style STYLE)] [(-f | --format FORMAT)]
-                     [(-i | --rate FLOAT)] [--error FILE] [(-h | --help)]
+Usage: spin [OPTIONS]
 
-    -c --chars STRING   Inline string to use as the spinner characters.
-    -f --format FORMAT  Customize the spinner display (default: '  @\r')
-    -r --rate FLOAT Determine the rate between slices (default: 240)
-    -n --size INT   Set the size of the spinner frames (default: 1)
-    -s --set STRING Name of the spinner set to use (default: )
-    -e --error FILE     Write errors to FILE (default: /dev/stderr)
+The following options are available:
 
-    -s --list       List available spinner sets
-    -h --help       Show usage help
+    -l or --list            List available spinner sets from sindresorhus
+    -s or --spinner=NAME    Name of the spinner set to use from list (default: ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏)
+    -c or --chars=CHARS     String of characters that make up the spinner
+    -f or --format=FORMAT   Customize the spinner display (default: '  @\r')
+    -i or --interval=FLOAT  Number of seconds between frames (default: 240)
+    -n or --framesize=SIZE  Number of characters per frame (default: 1)
+    -e or --error=FILE      Write errors to FILE (default: /dev/stderr)
+    -h or --help            Show usage help
 ```
 
 ## Customization
