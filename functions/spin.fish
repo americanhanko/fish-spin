@@ -32,8 +32,8 @@ function spin --description 'Background job spinner'
             case n framesize
                 set size $2
 
-            case erroro
-                set errr $2
+            case error
+                set error $2
 
             case h help
                 printf "Usage: spin [OPTIONS]\n\n"
